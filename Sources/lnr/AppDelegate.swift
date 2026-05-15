@@ -9,16 +9,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var appState: AppState!
     private var linearService: LinearService!
     private var cancellables = Set<AnyCancellable>()
+    private var settingsController: SettingsWindowController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         appState = AppState()
         linearService = LinearService(appState: appState)
+        settingsController = SettingsWindowController(appState: appState, linearService: linearService)
 
         applyAppearance()
         setupStatusItem()
         setupPopover()
         observeState()
         checkInitialState()
+
+        NotificationCenter.default.addObserver(forName: .openSettings, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.settingsController?.showWindow()
+            }
+        }
     }
 
     // MARK: - Appearance
