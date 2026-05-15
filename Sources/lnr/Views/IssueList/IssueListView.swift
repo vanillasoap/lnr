@@ -4,6 +4,7 @@ import AppKit
 struct IssueListView: View {
     @EnvironmentObject var appState: AppState
     @Environment(\.linearService) var linearService
+    @State private var isSearchFocused = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -13,6 +14,15 @@ struct IssueListView: View {
             contentArea
             Divider()
             footerBar
+        }
+        .onKeyPress(.upArrow) { navigateIssues(direction: -1); return .handled }
+        .onKeyPress(.downArrow) { navigateIssues(direction: 1); return .handled }
+        .onKeyPress(.return) { openSelectedIssue(); return .handled }
+        .onKeyPress(.space) { toggleSelectedExpansion(); return .handled }
+        .onKeyPress(characters: CharacterSet(charactersIn: "k")) { press in
+            guard press.modifiers.contains(.command) else { return .ignored }
+            isSearchFocused = true
+            return .handled
         }
     }
 
@@ -144,6 +154,32 @@ struct IssueListView: View {
             return "Synced \(seconds / 60)m ago"
         case .syncing: return "Syncing..."
         case .failed: return "Sync failed"
+        }
+    }
+
+    private func navigateIssues(direction: Int) {
+        let issues = appState.filteredIssues
+        guard !issues.isEmpty else { return }
+        guard let currentID = appState.selectedIssueID,
+              let currentIdx = issues.firstIndex(where: { $0.id == currentID }) else {
+            appState.selectedIssueID = issues.first?.id
+            return
+        }
+        let newIdx = max(0, min(issues.count - 1, currentIdx + direction))
+        appState.selectedIssueID = issues[newIdx].id
+    }
+
+    private func openSelectedIssue() {
+        guard let id = appState.selectedIssueID,
+              let issue = appState.filteredIssues.first(where: { $0.id == id }),
+              let url = URL(string: issue.url) else { return }
+        NSWorkspace.shared.open(url)
+    }
+
+    private func toggleSelectedExpansion() {
+        guard let id = appState.selectedIssueID else { return }
+        withAnimation(.easeInOut(duration: 0.2)) {
+            appState.expandedIssueID = appState.expandedIssueID == id ? nil : id
         }
     }
 }
