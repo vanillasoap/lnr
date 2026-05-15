@@ -127,8 +127,3 @@ extension Notification.Name {
     static let openSettings = Notification.Name("openSettings")
 }
 
-// MARK: - Stubs (replaced in later tasks)
-
-struct IssueListView: View {
-    var body: some View { Text("Issues") }
-}
