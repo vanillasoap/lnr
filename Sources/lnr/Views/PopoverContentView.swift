@@ -129,11 +129,6 @@ extension Notification.Name {
 
 // MARK: - Stubs (replaced in later tasks)
 
-struct WelcomeView: View {
-    let onContinue: () -> Void
-    var body: some View { Button("Continue", action: onContinue) }
-}
-
 struct APIKeyView: View {
     let onContinue: () -> Void
     let onSkip: () -> Void
