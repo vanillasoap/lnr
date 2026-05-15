@@ -147,13 +147,3 @@ struct IssueListView: View {
         }
     }
 }
-
-// Stub — replaced in Task 14
-struct IssueContextMenu: View {
-    let issue: Issue
-    var body: some View {
-        Button("Open in Linear") {
-            if let url = URL(string: issue.url) { NSWorkspace.shared.open(url) }
-        }
-    }
-}
