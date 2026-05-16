@@ -44,11 +44,11 @@ struct IssueRowView: View {
     private var priorityIcon: some View {
         switch issue.priority {
         case 1: UrgentBadge()
-        case 2: PriorityBars(level: 3, color: .orange)
-        case 3: PriorityBars(level: 2, color: .yellow)
-        case 4: PriorityBars(level: 1, color: .secondary.opacity(0.5))
+        case 2: PriorityBars(level: 3, color: .secondary)
+        case 3: PriorityBars(level: 2, color: .secondary)
+        case 4: PriorityBars(level: 1, color: .secondary)
         default:
-            PriorityBars(level: 0, color: .secondary.opacity(0.3))
+            PriorityBars(level: 0, color: .secondary)
         }
     }
 
