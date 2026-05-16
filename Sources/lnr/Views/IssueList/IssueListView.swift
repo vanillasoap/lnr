@@ -42,7 +42,7 @@ struct IssueListView: View {
             Spacer()
             HStack(spacing: 12) {
                 Button { Task { await linearService?.refreshNow() } } label: {
-                    Image(systemName: "arrow.clockwise").font(.caption)
+                    Image(systemName: "arrow.clockwise").font(.system(size: 14))
                 }
                 .buttonStyle(.plain)
 
@@ -61,7 +61,7 @@ struct IssueListView: View {
                         }
                     }
                 } label: {
-                    Image(systemName: "line.3.horizontal.decrease").font(.caption)
+                    Image(systemName: "line.3.horizontal.decrease").font(.system(size: 14))
                 }
 
                 Button {
@@ -69,7 +69,7 @@ struct IssueListView: View {
                     appState.savePreferences()
                 } label: {
                     Image(systemName: "line.3.horizontal.decrease.circle")
-                        .font(.caption)
+                        .font(.system(size: 14))
                         .symbolVariant(appState.viewMode == .groupedByState ? .fill : .none)
                 }
                 .buttonStyle(.plain)
@@ -77,7 +77,7 @@ struct IssueListView: View {
                 Button {
                     NotificationCenter.default.post(name: .openSettings, object: nil)
                 } label: {
-                    Image(systemName: "gearshape").font(.caption)
+                    Image(systemName: "gearshape").font(.system(size: 14))
                 }
                 .buttonStyle(.plain)
             }

@@ -43,17 +43,12 @@ struct IssueRowView: View {
     @ViewBuilder
     private var priorityIcon: some View {
         switch issue.priority {
-        case 1:
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.caption)
-                .foregroundStyle(.red)
-        case 2: PriorityBars(level: 3)
-        case 3: PriorityBars(level: 2)
-        case 4: PriorityBars(level: 1)
+        case 1: PriorityBars(level: 3, color: .orange)
+        case 2: PriorityBars(level: 3, color: .orange)
+        case 3: PriorityBars(level: 2, color: .yellow)
+        case 4: PriorityBars(level: 1, color: .blue)
         default:
-            Image(systemName: "circle")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+            PriorityBars(level: 0, color: .secondary.opacity(0.3))
         }
     }
 
@@ -131,15 +126,17 @@ struct IssueRowView: View {
 
 struct PriorityBars: View {
     let level: Int
+    let color: Color
+
     var body: some View {
         HStack(spacing: 1.5) {
-            ForEach(0..<3, id: \.self) { i in
+            ForEach(0..<4, id: \.self) { i in
                 RoundedRectangle(cornerRadius: 0.5)
-                    .fill(i < level ? Color.orange : Color.secondary.opacity(0.2))
-                    .frame(width: 3, height: CGFloat(4 + i * 2))
+                    .fill(i < level ? color : Color.secondary.opacity(0.15))
+                    .frame(width: 2.5, height: CGFloat(3 + i * 2))
             }
         }
-        .frame(width: 16, height: 16, alignment: .bottom)
+        .frame(width: 14, height: 14, alignment: .bottom)
     }
 }
 
