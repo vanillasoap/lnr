@@ -10,6 +10,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var linearService: LinearService!
     private var cancellables = Set<AnyCancellable>()
     private var settingsController: SettingsWindowController?
+    private var pulseTimer: Timer?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         appState = AppState()
@@ -51,39 +52,40 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func updateIcon() {
         guard let button = statusItem.button else { return }
-        button.subviews.filter { $0.tag == 999 }.forEach { $0.removeFromSuperview() }
 
         let symbolName: String
         let badgeText: String?
         let toolTip: String
+        var isSyncing = false
 
         switch appState.connectionStatus {
         case .notConfigured:
-            symbolName = "circle.circle"
+            symbolName = "smallcircle.filled.circle"
             badgeText = nil
             toolTip = "lnr — Not configured"
         case .connecting:
-            symbolName = "arrow.triangle.2.circlepath"
+            symbolName = "arrow.trianglehead.2.clockwise.rotate.90.circle.fill"
             badgeText = nil
             toolTip = "lnr — Connecting..."
         case .connected:
             switch appState.syncStatus {
             case .syncing:
-                symbolName = "arrow.triangle.2.circlepath"
+                symbolName = "smallcircle.filled.circle"
                 badgeText = button.title.isEmpty ? nil : button.title
                 toolTip = "lnr — Syncing..."
+                isSyncing = true
             case .failed:
-                symbolName = "circle.circle"
+                symbolName = "exclamationmark.circle"
                 badgeText = button.title.isEmpty ? nil : button.title
                 toolTip = "lnr — Last sync failed"
             case .idle:
-                symbolName = "circle.circle"
+                symbolName = "smallcircle.filled.circle"
                 let count = appState.filteredIssues.count
                 badgeText = (count > 0 && appState.showBadgeCount) ? "\(count)" : nil
                 toolTip = count > 0 ? "lnr — \(count) issues" : "lnr — Connected"
             }
         case .error:
-            symbolName = "circle.circle"
+            symbolName = "exclamationmark.circle"
             badgeText = nil
             toolTip = "lnr — Last sync failed"
         }
@@ -95,20 +97,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         button.title = badgeText ?? ""
         button.toolTip = toolTip
 
-        if case .failed = appState.syncStatus, case .connected = appState.connectionStatus {
-            addErrorBadge(to: button)
-        } else if case .error = appState.connectionStatus {
-            addErrorBadge(to: button)
+        if isSyncing {
+            startPulse()
+        } else {
+            stopPulse()
         }
     }
 
-    private func addErrorBadge(to button: NSStatusBarButton) {
-        let badge = NSImageView()
-        badge.tag = 999
-        badge.image = NSImage(systemSymbolName: "exclamationmark.circle.fill", accessibilityDescription: "error")
-        badge.contentTintColor = .systemRed
-        badge.frame = NSRect(x: button.bounds.width - 10, y: 0, width: 8, height: 8)
-        button.addSubview(badge)
+    private func startPulse() {
+        guard pulseTimer == nil, let button = statusItem.button else { return }
+        button.alphaValue = 1.0
+        var fadingOut = true
+        pulseTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak button] timer in
+            guard let button else { timer.invalidate(); return }
+            if fadingOut {
+                button.alphaValue -= 0.02
+                if button.alphaValue <= 0.3 { fadingOut = false }
+            } else {
+                button.alphaValue += 0.02
+                if button.alphaValue >= 1.0 { fadingOut = true }
+            }
+        }
+    }
+
+    private func stopPulse() {
+        pulseTimer?.invalidate()
+        pulseTimer = nil
+        statusItem.button?.alphaValue = 1.0
     }
 
     // MARK: - Popover
