@@ -14,26 +14,26 @@ struct IssueRowView: View {
                 expandedContent
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 5)
         .padding(.horizontal, 12)
         .background(isSelected ? Color.accentColor.opacity(0.1) : Color.clear)
         .contentShape(Rectangle())
     }
 
     private var compactRow: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 8) {
             priorityIcon
-                .frame(width: 16, height: 16)
-            StateIcon(state: issue.state)
+                .frame(width: 18, height: 18)
+            StateIcon(state: issue.state, size: 10)
             Text(issue.identifier)
-                .font(.caption.monospaced())
+                .font(.subheadline.monospaced())
                 .foregroundStyle(.secondary)
             Text(issue.title)
                 .font(.body)
                 .lineLimit(1)
             Spacer()
             Text(issue.relativeTimestamp)
-                .font(.caption)
+                .font(.subheadline)
                 .foregroundStyle(.tertiary)
         }
     }
@@ -54,7 +54,7 @@ struct IssueRowView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(issue.identifier)
-                    .font(.caption.monospaced())
+                    .font(.subheadline.monospaced())
                     .foregroundStyle(.secondary)
                 StatusPill(state: issue.state)
                 Spacer()
@@ -67,7 +67,7 @@ struct IssueRowView: View {
 
             if let desc = issue.strippedDescription, !desc.isEmpty {
                 Text(desc)
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .lineLimit(4)
             }
@@ -76,21 +76,21 @@ struct IssueRowView: View {
                 HStack(spacing: 4) {
                     Circle()
                         .fill(Color(hex: issue.team.color))
-                        .frame(width: 6, height: 6)
+                        .frame(width: 7, height: 7)
                     Text(issue.team.key)
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                 }
                 Text("·").foregroundStyle(.tertiary)
                 Text(issue.relativeTimestamp)
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundStyle(.tertiary)
 
                 Spacer()
 
                 Button { onOpen() } label: {
                     Image(systemName: "arrow.up.right.square")
-                        .font(.caption)
+                        .font(.subheadline)
                 }
                 .buttonStyle(.plain)
 
@@ -106,32 +106,32 @@ struct IssueRowView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis")
-                        .font(.caption)
+                        .font(.subheadline)
                 }
                 .menuStyle(.borderlessButton)
                 .fixedSize()
 
                 Button("Open in Linear") { onOpen() }
-                    .font(.caption)
+                    .font(.subheadline)
                     .buttonStyle(.borderedProminent)
                     .controlSize(.small)
             }
             .padding(.top, 4)
         }
-        .padding(.leading, 30)
+        .padding(.leading, 34)
     }
 }
 
 struct UrgentBadge: View {
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 3)
+            RoundedRectangle(cornerRadius: 3.5)
                 .fill(Color.orange)
             Text("!")
-                .font(.system(size: 10, weight: .heavy))
+                .font(.system(size: 11, weight: .heavy))
                 .foregroundStyle(.white)
         }
-        .frame(width: 14, height: 14)
+        .frame(width: 16, height: 16)
     }
 }
 
@@ -140,20 +140,20 @@ struct PriorityBars: View {
     let color: Color
 
     var body: some View {
-        HStack(spacing: 1.5) {
+        HStack(spacing: 2) {
             ForEach(0..<4, id: \.self) { i in
                 RoundedRectangle(cornerRadius: 0.5)
                     .fill(i < level ? color : Color.secondary.opacity(0.15))
-                    .frame(width: 2.5, height: CGFloat(3 + i * 2))
+                    .frame(width: 3, height: CGFloat(4 + i * 2))
             }
         }
-        .frame(width: 14, height: 14, alignment: .bottom)
+        .frame(width: 16, height: 16, alignment: .bottom)
     }
 }
 
 struct StateIcon: View {
     let state: WorkflowState
-    var size: CGFloat = 8
+    var size: CGFloat = 10
 
     var body: some View {
         Image(systemName: symbolName)
@@ -179,12 +179,12 @@ struct StatusPill: View {
     let state: WorkflowState
     var body: some View {
         HStack(spacing: 4) {
-            StateIcon(state: state, size: 6)
+            StateIcon(state: state, size: 8)
             Text(state.name)
-                .font(.caption2)
+                .font(.caption)
         }
-        .padding(.horizontal, 6)
-        .padding(.vertical, 2)
+        .padding(.horizontal, 7)
+        .padding(.vertical, 3)
         .background(Capsule().fill(Color(hex: state.color).opacity(0.15)))
     }
 }

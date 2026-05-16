@@ -34,15 +34,15 @@ struct IssueListView: View {
                 Text("Inbox")
                     .font(.headline)
                 Text("\(appState.filteredIssues.count)")
-                    .font(.caption.bold())
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 1)
+                    .font(.subheadline.bold())
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
                     .background(Capsule().fill(.quaternary))
             }
             Spacer()
             HStack(spacing: 12) {
                 Button { Task { await linearService?.refreshNow() } } label: {
-                    Image(systemName: "arrow.clockwise").font(.system(size: 14))
+                    Image(systemName: "arrow.clockwise").font(.system(size: 16))
                 }
                 .buttonStyle(.plain)
 
@@ -61,7 +61,7 @@ struct IssueListView: View {
                         }
                     }
                 } label: {
-                    Image(systemName: "line.3.horizontal.decrease").font(.system(size: 14))
+                    Image(systemName: "line.3.horizontal.decrease").font(.system(size: 16))
                 }
 
                 Button {
@@ -69,7 +69,7 @@ struct IssueListView: View {
                     appState.savePreferences()
                 } label: {
                     Image(systemName: "line.3.horizontal.decrease.circle")
-                        .font(.system(size: 14))
+                        .font(.system(size: 16))
                         .symbolVariant(appState.viewMode == .groupedByState ? .fill : .none)
                 }
                 .buttonStyle(.plain)
@@ -77,7 +77,7 @@ struct IssueListView: View {
                 Button {
                     NotificationCenter.default.post(name: .openSettings, object: nil)
                 } label: {
-                    Image(systemName: "gearshape").font(.system(size: 14))
+                    Image(systemName: "gearshape").font(.system(size: 16))
                 }
                 .buttonStyle(.plain)
             }
@@ -99,11 +99,11 @@ struct IssueListView: View {
                 .buttonStyle(.plain)
             } else {
                 Text("⌘K")
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.quaternary)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 1)
-                    .background(RoundedRectangle(cornerRadius: 3).stroke(.quaternary))
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(RoundedRectangle(cornerRadius: 4).stroke(.quaternary))
             }
         }
         .padding(.horizontal, 12)
@@ -131,14 +131,14 @@ struct IssueListView: View {
                     Image(systemName: "arrow.up")
                     Image(systemName: "arrow.down")
                 }
-                .font(.caption2)
+                .font(.caption)
                 .foregroundStyle(.quaternary)
-                Text("navigate").font(.caption2).foregroundStyle(.quaternary)
-                Image(systemName: "return").font(.caption2).foregroundStyle(.quaternary)
-                Text("open").font(.caption2).foregroundStyle(.quaternary)
+                Text("navigate").font(.caption).foregroundStyle(.quaternary)
+                Image(systemName: "return").font(.caption).foregroundStyle(.quaternary)
+                Text("open").font(.caption).foregroundStyle(.quaternary)
             }
             Spacer()
-            Text(syncStatusLabel).font(.caption2).foregroundStyle(.quaternary)
+            Text(syncStatusLabel).font(.caption).foregroundStyle(.quaternary)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 6)

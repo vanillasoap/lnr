@@ -1,7 +1,7 @@
 import Foundation
 
 enum Constants {
-    static let popoverWidth: CGFloat = 360
+    static let popoverWidth: CGFloat = 420
     static let popoverMaxHeight: CGFloat = 500
     static let settingsWidth: CGFloat = 480
     static let settingsHeight: CGFloat = 400

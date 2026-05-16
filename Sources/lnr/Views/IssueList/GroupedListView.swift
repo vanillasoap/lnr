@@ -32,7 +32,7 @@ struct GroupedListView: View {
         HStack(spacing: 8) {
             ForEach(StateTab.allCases, id: \.self) { tab in
                 Button(tab.rawValue) { selectedTab = tab }
-                    .font(.caption)
+                    .font(.subheadline)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(
@@ -50,7 +50,7 @@ struct GroupedListView: View {
                 }
             } label: {
                 Text(teamFilter == nil ? "All teams" : appState.teams.first { $0.id == teamFilter }?.name ?? "All teams")
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
             .menuStyle(.borderlessButton)
@@ -111,14 +111,14 @@ struct GroupedListView: View {
                         HStack {
                             StateIcon(state: group.state)
                             Text(group.state.name.uppercased())
-                                .font(.caption2.bold())
+                                .font(.caption.bold())
                                 .foregroundStyle(.secondary)
                             Text("\(group.issues.count)")
-                                .font(.caption2)
+                                .font(.caption)
                                 .foregroundStyle(.tertiary)
                             Spacer()
                             Image(systemName: collapsedSections.contains(group.state.name) ? "chevron.right" : "chevron.down")
-                                .font(.caption2)
+                                .font(.caption)
                                 .foregroundStyle(.tertiary)
                         }
                     }
@@ -136,7 +136,7 @@ struct GroupedListView: View {
         let review = appState.filteredIssues.filter { $0.state.name.lowercased().contains("review") }.count
         return HStack {
             Text("\(active) active · \(todo) todo · \(review) review")
-                .font(.caption2)
+                .font(.caption)
                 .foregroundStyle(.quaternary)
             Spacer()
         }
