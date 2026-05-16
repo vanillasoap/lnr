@@ -21,9 +21,7 @@ struct IssueContextMenu: View {
                         if issue.state.id == state.id {
                             Image(systemName: "checkmark")
                         }
-                        Circle()
-                            .fill(Color(hex: state.color))
-                            .frame(width: 8, height: 8)
+                        StateIcon(state: state)
                         Text(state.name)
                     }
                 }

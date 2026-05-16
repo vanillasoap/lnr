@@ -66,17 +66,20 @@ struct GroupedListView: View {
             .filter { teamFilter == nil || $0.team.id == teamFilter }
     }
 
-    private var groupedIssues: [(name: String, color: String, issues: [Issue])] {
+    private var groupedIssues: [(state: WorkflowState, issues: [Issue])] {
         let grouped = Dictionary(grouping: filteredByTab) { $0.state.name }
-        return grouped.map { (name: $0.key, color: $0.value.first?.state.color ?? "#888", issues: $0.value) }
-            .sorted { ($0.issues.first?.state.position ?? 0) < ($1.issues.first?.state.position ?? 0) }
+        return grouped.compactMap { entry in
+            guard let first = entry.value.first else { return nil }
+            return (state: first.state, issues: entry.value)
+        }
+        .sorted { $0.state.position < $1.state.position }
     }
 
     private var groupedList: some View {
         List {
-            ForEach(groupedIssues, id: \.name) { group in
+            ForEach(groupedIssues, id: \.state.id) { group in
                 Section {
-                    if !collapsedSections.contains(group.name) {
+                    if !collapsedSections.contains(group.state.name) {
                         ForEach(group.issues) { issue in
                             IssueRowView(
                                 issue: issue,
@@ -99,24 +102,22 @@ struct GroupedListView: View {
                     }
                 } header: {
                     Button {
-                        if collapsedSections.contains(group.name) {
-                            collapsedSections.remove(group.name)
+                        if collapsedSections.contains(group.state.name) {
+                            collapsedSections.remove(group.state.name)
                         } else {
-                            collapsedSections.insert(group.name)
+                            collapsedSections.insert(group.state.name)
                         }
                     } label: {
                         HStack {
-                            Circle()
-                                .fill(Color(hex: group.color))
-                                .frame(width: 8, height: 8)
-                            Text(group.name.uppercased())
+                            StateIcon(state: group.state)
+                            Text(group.state.name.uppercased())
                                 .font(.caption2.bold())
                                 .foregroundStyle(.secondary)
                             Text("\(group.issues.count)")
                                 .font(.caption2)
                                 .foregroundStyle(.tertiary)
                             Spacer()
-                            Image(systemName: collapsedSections.contains(group.name) ? "chevron.right" : "chevron.down")
+                            Image(systemName: collapsedSections.contains(group.state.name) ? "chevron.right" : "chevron.down")
                                 .font(.caption2)
                                 .foregroundStyle(.tertiary)
                         }

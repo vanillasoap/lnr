@@ -24,9 +24,7 @@ struct IssueRowView: View {
         HStack(spacing: 6) {
             priorityIcon
                 .frame(width: 16, height: 16)
-            Circle()
-                .fill(Color(hex: issue.state.color))
-                .frame(width: 8, height: 8)
+            StateIcon(state: issue.state)
             Text(issue.identifier)
                 .font(.caption.monospaced())
                 .foregroundStyle(.secondary)
@@ -153,13 +151,35 @@ struct PriorityBars: View {
     }
 }
 
+struct StateIcon: View {
+    let state: WorkflowState
+    var size: CGFloat = 8
+
+    var body: some View {
+        Image(systemName: symbolName)
+            .resizable()
+            .scaledToFit()
+            .frame(width: size, height: size)
+            .foregroundStyle(Color(hex: state.color))
+    }
+
+    private var symbolName: String {
+        switch state.type {
+        case .triage: "circle.dashed"
+        case .backlog: "circle.dashed"
+        case .unstarted: "circle"
+        case .started: "circle.lefthalf.filled"
+        case .completed: "checkmark.circle.fill"
+        case .cancelled: "xmark.circle.fill"
+        }
+    }
+}
+
 struct StatusPill: View {
     let state: WorkflowState
     var body: some View {
         HStack(spacing: 4) {
-            Circle()
-                .fill(Color(hex: state.color))
-                .frame(width: 6, height: 6)
+            StateIcon(state: state, size: 6)
             Text(state.name)
                 .font(.caption2)
         }
