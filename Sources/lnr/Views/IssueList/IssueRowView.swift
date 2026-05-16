@@ -165,12 +165,12 @@ struct StateIcon: View {
 
     private var symbolName: String {
         switch state.type {
-        case .triage: "circle.dashed"
-        case .backlog: "circle.dashed"
-        case .unstarted: "circle"
-        case .started: "circle.lefthalf.filled"
-        case .completed: "checkmark.circle.fill"
-        case .cancelled: "xmark.circle.fill"
+        case .triage: return "circle.dotted"
+        case .backlog: return "circle"
+        case .unstarted: return "circle"
+        case .started: return "circle.lefthalf.filled"
+        case .completed: return "checkmark.circle"
+        case .cancelled: return "xmark.circle"
         }
     }
 }

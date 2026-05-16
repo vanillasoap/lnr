@@ -8,8 +8,11 @@ struct IssueContextMenu: View {
 
     var body: some View {
         Button("Open in Linear") { openInLinear() }
+            .accessibilityLabel("Open issue in Linear")
         Button("Copy link") { copyToClipboard(issue.url) }
+            .accessibilityLabel("Copy issue link")
         Button("Copy identifier") { copyToClipboard(issue.identifier) }
+            .accessibilityLabel("Copy issue identifier")
         Divider()
         Menu("Change status...") {
             let states = appState.workflowStates[issue.team.id] ?? []
@@ -27,6 +30,7 @@ struct IssueContextMenu: View {
                 }
             }
         }
+        .accessibilityLabel("Change issue status")
         Menu("Set priority...") {
             ForEach([(1, "Urgent"), (2, "High"), (3, "Medium"), (4, "Low"), (0, "None")], id: \.0) { value, label in
                 Button {
@@ -39,14 +43,17 @@ struct IssueContextMenu: View {
                 }
             }
         }
+        .accessibilityLabel("Set issue priority")
         Menu("Snooze...") {
             Button("1 hour") { snooze(hours: 1) }
             Button("4 hours") { snooze(hours: 4) }
             Button("Tomorrow") { snoozeTomorrow() }
             Button("Next week") { snoozeNextWeek() }
         }
+        .accessibilityLabel("Snooze issue")
         Divider()
         Button(role: .destructive) { deleteIssue() } label: { Text("Delete") }
+            .accessibilityLabel("Delete issue")
     }
 
     private func openInLinear() {

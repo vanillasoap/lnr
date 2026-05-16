@@ -1,5 +1,13 @@
 import Foundation
 
+enum Formatters {
+    static let relative: RelativeDateTimeFormatter = {
+        let f = RelativeDateTimeFormatter()
+        f.unitsStyle = .abbreviated
+        return f
+    }()
+}
+
 struct Issue: Codable, Identifiable {
     let id: String
     let identifier: String
@@ -33,9 +41,7 @@ struct Issue: Codable, Identifiable {
     }
 
     var relativeTimestamp: String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .abbreviated
-        return formatter.localizedString(for: updatedAt, relativeTo: .now)
+        Formatters.relative.localizedString(for: updatedAt, relativeTo: .now)
     }
 
     var strippedDescription: String? {

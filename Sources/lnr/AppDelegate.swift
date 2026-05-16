@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 import Combine
+import os.log
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -10,7 +11,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var linearService: LinearService!
     private var cancellables = Set<AnyCancellable>()
     private var settingsController: SettingsWindowController?
-    private var pulseTimer: Timer?
+    private let logger = Logger(subsystem: Constants.loggingSubsystem, category: "app")
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         appState = AppState()
@@ -18,6 +19,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         settingsController = SettingsWindowController(appState: appState, linearService: linearService)
 
         applyAppearance()
+        NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in
+                self?.applyAppearance()
+            }
+        }
         setupStatusItem()
         setupPopover()
         observeState()
@@ -45,8 +51,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         guard let button = statusItem.button else { return }
-        button.action = #selector(togglePopover)
+        button.action = #selector(togglePopover(_:))
         button.target = self
+        button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         updateIcon()
     }
 
@@ -56,7 +63,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let symbolName: String
         let badgeText: String?
         let toolTip: String
-        var isSyncing = false
 
         switch appState.connectionStatus {
         case .notConfigured:
@@ -73,7 +79,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 symbolName = "smallcircle.filled.circle"
                 badgeText = button.title.isEmpty ? nil : button.title
                 toolTip = "lnr — Syncing..."
-                isSyncing = true
             case .failed:
                 symbolName = "exclamationmark.circle"
                 badgeText = button.title.isEmpty ? nil : button.title
@@ -96,34 +101,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         button.title = badgeText ?? ""
         button.toolTip = toolTip
-
-        if isSyncing {
-            startPulse()
-        } else {
-            stopPulse()
-        }
-    }
-
-    private func startPulse() {
-        guard pulseTimer == nil, let button = statusItem.button else { return }
-        button.alphaValue = 1.0
-        var fadingOut = true
-        pulseTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak button] timer in
-            guard let button else { timer.invalidate(); return }
-            if fadingOut {
-                button.alphaValue -= 0.02
-                if button.alphaValue <= 0.3 { fadingOut = false }
-            } else {
-                button.alphaValue += 0.02
-                if button.alphaValue >= 1.0 { fadingOut = true }
-            }
-        }
-    }
-
-    private func stopPulse() {
-        pulseTimer?.invalidate()
-        pulseTimer = nil
-        statusItem.button?.alphaValue = 1.0
     }
 
     // MARK: - Popover
@@ -140,14 +117,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
     }
 
-    @objc private func togglePopover() {
-        guard let button = statusItem.button else { return }
+    @objc private func togglePopover(_ sender: NSStatusBarButton) {
+        guard let event = NSApp.currentEvent else { return }
+        if event.type == .rightMouseUp {
+            let menu = NSMenu()
+            menu.addItem(withTitle: "Preferences…", action: #selector(openSettings), keyEquivalent: ",")
+            menu.addItem(withTitle: "About lnr", action: #selector(showAbout), keyEquivalent: "")
+            menu.addItem(.separator())
+            menu.addItem(withTitle: "Quit lnr", action: #selector(quitApp), keyEquivalent: "q")
+            statusItem.menu = menu
+            statusItem.button?.performClick(nil)
+            statusItem.menu = nil
+            return
+        }
         if popover.isShown {
             popover.performClose(nil)
         } else {
-            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            popover.show(relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
             NSApp.activate(ignoringOtherApps: true)
         }
+    }
+
+    @objc private func openSettings() {
+        settingsController?.showWindow()
+    }
+
+    @objc private func showAbout() {
+        NSApp.orderFrontStandardAboutPanel(nil)
+    }
+
+    @objc private func quitApp() {
+        NSApp.terminate(nil)
     }
 
     // MARK: - State Observation
@@ -198,7 +198,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 }
                 await linearService.startPolling()
             } catch {
-                print("[lnr] checkInitialState failed: \(error)")
+                self.logger.error("[lnr] checkInitialState failed: \(String(describing: error), privacy: .public)")
                 appState.connectionStatus = .error(message: error.localizedDescription)
             }
         }

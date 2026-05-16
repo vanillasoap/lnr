@@ -45,6 +45,7 @@ struct IssueListView: View {
                     Image(systemName: "arrow.clockwise").font(.system(size: 16))
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Refresh issues")
 
                 Menu {
                     ForEach(SortOrder.allCases, id: \.self) { order in
@@ -63,6 +64,7 @@ struct IssueListView: View {
                 } label: {
                     Image(systemName: "line.3.horizontal.decrease").font(.system(size: 16))
                 }
+                .accessibilityLabel("Sort options")
 
                 Button {
                     appState.viewMode = appState.viewMode == .flat ? .groupedByState : .flat
@@ -73,6 +75,7 @@ struct IssueListView: View {
                         .symbolVariant(appState.viewMode == .groupedByState ? .fill : .none)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Toggle view mode")
 
                 Button {
                     NotificationCenter.default.post(name: .openSettings, object: nil)
@@ -80,6 +83,7 @@ struct IssueListView: View {
                     Image(systemName: "gearshape").font(.system(size: 16))
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Open Preferences")
             }
         }
         .padding(.horizontal, 12)
@@ -178,8 +182,12 @@ struct IssueListView: View {
 
     private func toggleSelectedExpansion() {
         guard let id = appState.selectedIssueID else { return }
-        withAnimation(.easeInOut(duration: 0.2)) {
+        if NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
             appState.expandedIssueID = appState.expandedIssueID == id ? nil : id
+        } else {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                appState.expandedIssueID = appState.expandedIssueID == id ? nil : id
+            }
         }
     }
 }

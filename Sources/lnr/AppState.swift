@@ -106,7 +106,7 @@ final class AppState: ObservableObject {
     }
 
     var issuesByStateGroup: [String: [Issue]] {
-        Dictionary(grouping: filteredIssues) { $0.state.name }
+        Dictionary(grouping: filteredIssues) { $0.state.id }
     }
 
     func savePreferences() {

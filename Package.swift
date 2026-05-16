@@ -7,7 +7,8 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "lnr",
-            path: "Sources/lnr"
+            path: "Sources/lnr",
+            exclude: ["Info.plist"]
         ),
         .testTarget(
             name: "lnrTests",

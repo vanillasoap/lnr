@@ -59,7 +59,7 @@ struct LinearServiceTests {
             apiKey: "lin_api_test"
         )
         #expect(request.httpMethod == "POST")
-        #expect(request.value(forHTTPHeaderField: "Authorization") == "lin_api_test")
+        #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer lin_api_test")
         #expect(request.value(forHTTPHeaderField: "Content-Type") == "application/json")
     }
 }

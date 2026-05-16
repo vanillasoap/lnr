@@ -15,7 +15,8 @@ struct KeychainService {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: "linear-api-key",
-            kSecValueData as String: data
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlocked
         ]
         let status = SecItemAdd(query as CFDictionary, nil)
         guard status == errSecSuccess else {

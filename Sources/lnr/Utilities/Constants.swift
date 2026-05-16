@@ -7,6 +7,7 @@ enum Constants {
     static let settingsHeight: CGFloat = 400
     static let linearAPIURL = URL(string: "https://api.linear.app/graphql")!
     static let defaultPollingInterval: TimeInterval = 60
+    static let loggingSubsystem: String = "com.lnr.app"
 
     enum Defaults {
         static let pollingInterval = "pollingInterval"
