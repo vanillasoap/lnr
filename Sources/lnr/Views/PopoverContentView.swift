@@ -15,7 +15,11 @@ struct PopoverContentView: View {
             case .connecting:
                 LoadingView(message: "Connecting...")
             case .connected:
-                IssueListView()
+                if appState.onboardingComplete {
+                    IssueListView()
+                } else {
+                    OnboardingContainerView()
+                }
             case .error(let message):
                 if appState.issues.isEmpty {
                     ErrorView(message: message)
