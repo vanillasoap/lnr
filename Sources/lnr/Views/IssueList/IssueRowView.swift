@@ -43,10 +43,10 @@ struct IssueRowView: View {
     @ViewBuilder
     private var priorityIcon: some View {
         switch issue.priority {
-        case 1: PriorityBars(level: 3, color: .orange)
+        case 1: UrgentBadge()
         case 2: PriorityBars(level: 3, color: .orange)
         case 3: PriorityBars(level: 2, color: .yellow)
-        case 4: PriorityBars(level: 1, color: .blue)
+        case 4: PriorityBars(level: 1, color: .secondary.opacity(0.5))
         default:
             PriorityBars(level: 0, color: .secondary.opacity(0.3))
         }
@@ -121,6 +121,19 @@ struct IssueRowView: View {
             .padding(.top, 4)
         }
         .padding(.leading, 30)
+    }
+}
+
+struct UrgentBadge: View {
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 3)
+                .fill(Color.orange)
+            Text("!")
+                .font(.system(size: 10, weight: .heavy))
+                .foregroundStyle(.white)
+        }
+        .frame(width: 14, height: 14)
     }
 }
 
