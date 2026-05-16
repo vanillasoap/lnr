@@ -209,6 +209,7 @@ actor LinearService {
                         appState.lastSyncDate = .now
                     }
                 } catch {
+                    print("[lnr] polling fetch failed: \(error)")
                     if !Task.isCancelled {
                         await MainActor.run { appState.syncStatus = .failed(lastAttempt: .now) }
                     }

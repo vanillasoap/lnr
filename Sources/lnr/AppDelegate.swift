@@ -183,6 +183,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 }
                 await linearService.startPolling()
             } catch {
+                print("[lnr] checkInitialState failed: \(error)")
                 appState.connectionStatus = .error(message: error.localizedDescription)
             }
         }
