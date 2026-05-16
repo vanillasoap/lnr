@@ -39,7 +39,7 @@ actor LinearService {
         var request = URLRequest(url: Constants.linearAPIURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue(apiKey, forHTTPHeaderField: "Authorization")
         var body: [String: Any] = ["query": query]
         if let variables { body["variables"] = variables }
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
