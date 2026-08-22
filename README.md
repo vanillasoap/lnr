@@ -25,7 +25,7 @@ Then build and run from Xcode (⌘R).
 
 ## Setup
 
-1. Get a Linear personal API key from [linear.app/settings/api](https://linear.app/settings/api)
+1. Grab a Linear personal API key from [linear.app/settings/api](https://linear.app/settings/api)
 2. Launch lnr, click the ⊙ icon in your menubar
 3. Paste your API key and pick your teams
 4. Done, your issues appear in the menubar
